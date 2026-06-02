@@ -13,13 +13,18 @@ export function getContacts(req, res) {
 export function getContactById(req, res) {
   const contact = getContactByIdOrNull(req.params.id);
   if (!contact) {
-    return res.status(404).send({ error: "ontact not found" });
+    return res.status(404).send({ error: "contact not found" });
   }
   res.send(contact);
 }
 
 export function createContact(req, res) {
   const { id, name, tel, country } = req.body;
+  
+  if (!id || !name || !tel || !country) {
+    return res.status(400).send({ error: "missing required fields" });
+  }
+  
   const newContact = addContact({ id, name, tel, country });
   res.status(201).send(newContact);
 }
