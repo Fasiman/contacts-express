@@ -9,6 +9,8 @@ import HttpError from "../helpers/HttpError.js";
 import { contactSchema } from "../validators/contactValidator.js";
 import { deleteContactSchema } from "../validators/contactValidator.js";
 
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
+
 export function getContacts(req, res) {
   res.send(getAllContacts());
 }
@@ -60,4 +62,10 @@ export function deleteContact(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
+export default {
+  getContacts: ctrlWrapper(getAllContacts),
+  getContactById: ctrlWrapper(getContactById),
+  createContact: ctrlWrapper(createContact),
+  deleteContact : ctrlWrapper(deleteContact)
 }
