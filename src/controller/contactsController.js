@@ -30,7 +30,7 @@ export const createContact = ctrlWrapper((req, res, next) => {
     throw HttpError(400, error.message);
   }
 
-  const newContact = addContact({ id, name, tel, country });
+  const newContact = addContact({ name, tel, country });
   res.status(201).send(newContact);
 });
 

@@ -10,7 +10,6 @@ export function getContactByIdOrNull(id) {
 
 export function addContact(contactData) {
   const newContact = {
-    id: contactData.id,
     name: contactData.name,
     tel: contactData.tel,
     country: contactData.country,
