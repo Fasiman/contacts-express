@@ -9,7 +9,9 @@ export function getContactByIdOrNull(id) {
 }
 
 export function addContact(contactData) {
+  const nextId = (contacts.length ? Math.max(...contacts.map((contact) => contact.id)) : 0) + 1;
   const newContact = {
+    id: nextId,
     name: contactData.name,
     tel: contactData.tel,
     country: contactData.country,
@@ -24,9 +26,15 @@ export function patchContact(id, updates) {
     return null;
   }
 
-  if (updates.name) contact.name = updates.name;
-  if (updates.tel) contact.tel = updates.tel;
-  if (updates.country) contact.country = updates.country;
+  if (Object.prototype.hasOwnProperty.call(updates, "name")) {
+    contact.name = updates.name;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, "tel")) {
+    contact.tel = updates.tel;
+  }
+  if (Object.prototype.hasOwnProperty.call(updates, "country")) {
+    contact.country = updates.country;
+  }
 
   return contact;
 }

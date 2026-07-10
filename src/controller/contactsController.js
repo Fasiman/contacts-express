@@ -6,7 +6,7 @@ import {
   removeContact,
 } from "../services/contactsService.js";
 import HttpError from "../helpers/HttpError.js";
-import { contactSchema, deleteContactSchema } from "../validators/contactValidator.js";
+import { contactSchema, updateContactSchema, deleteContactSchema } from "../validators/contactValidator.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 export const getContacts = ctrlWrapper((req, res) => {
@@ -22,19 +22,23 @@ export const getContactById = ctrlWrapper((req, res) => {
   res.send(contact);
 });
 
-export const createContact = ctrlWrapper((req, res, next) => {
-  const { id, name, tel, country } = req.body;
-  const { error } = contactSchema.validate(req.body);
+export const createContact = ctrlWrapper((req, res) => {
+  const { error } = contactSchema.validate(req.body, { abortEarly: false });
 
   if (error) {
     throw HttpError(400, error.message);
   }
 
-  const newContact = addContact({ name, tel, country });
+  const newContact = addContact(req.body);
   res.status(201).send(newContact);
 });
 
 export const updateContact = ctrlWrapper((req, res) => {
+  const { error } = updateContactSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
   const contact = patchContact(req.params.id, req.body);
   if (!contact) {
     return res.status(404).send({ error: "contact not found" });
