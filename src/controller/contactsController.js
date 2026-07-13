@@ -24,6 +24,7 @@ export const getContactById = ctrlWrapper((req, res) => {
 
 export const createContact = ctrlWrapper((req, res) => {
   const { error } = contactSchema.validate(req.body, { abortEarly: false });
+  console.log(req.body)
 
   if (error) {
     throw HttpError(400, error.message);

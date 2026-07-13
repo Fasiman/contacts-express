@@ -1,7 +1,16 @@
-import { contacts } from "../../db/contacts.js";
+import { writeFile, readFile } from "fs/promises";
+// import { contacts } from "../../db/contacts.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const contacts = path.join(__dirname, "../../db/contacts.json`````");
 export function getAllContacts() {
-  return contacts;
+  const data = readFile(contacts, "utf-8");
+
+  return JSON.stringify(data);
 }
 
 export function getContactByIdOrNull(id) {
@@ -9,7 +18,9 @@ export function getContactByIdOrNull(id) {
 }
 
 export function addContact(contactData) {
-  const nextId = (contacts.length ? Math.max(...contacts.map((contact) => contact.id)) : 0) + 1;
+  const nextId =
+    (contacts.length ? Math.max(...contacts.map((contact) => contact.id)) : 0) +
+    1;
   const newContact = {
     id: nextId,
     name: contactData.name,
@@ -17,6 +28,9 @@ export function addContact(contactData) {
     country: contactData.country,
   };
   contacts.push(newContact);
+
+  // writeFile(dataPath, contacts)
+  console.log(contacts);
   return newContact;
 }
 
@@ -26,21 +40,13 @@ export function patchContact(id, updates) {
     return null;
   }
 
-  if (Object.prototype.hasOwnProperty.call(updates, "name")) {
-    contact.name = updates.name;
-  }
-  if (Object.prototype.hasOwnProperty.call(updates, "tel")) {
-    contact.tel = updates.tel;
-  }
-  if (Object.prototype.hasOwnProperty.call(updates, "country")) {
-    contact.country = updates.country;
-  }
-
   return contact;
 }
 
 export function removeContact(id) {
-  const index = contacts.findIndex((contact) => String(contact.id) === String(id));
+  const index = contacts.findIndex(
+    (contact) => String(contact.id) === String(id),
+  );
   if (index === -1) {
     return false;
   }
