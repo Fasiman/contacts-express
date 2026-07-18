@@ -1,25 +1,29 @@
 import { writeFile, readFile } from "fs/promises";
 // import { contacts } from "../../db/contacts.js";
-import fs from "fs";
+import fs, { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const contacts = path.join(__dirname, "../../db/contacts.json`````");
+const contacts = path.join(__dirname, "../db/contacts.json");
 export function getAllContacts() {
-  const data = readFile(contacts, "utf-8");
+  const data = readFileSync(contacts, "utf-8");
 
-  return JSON.stringify(data);
+  return JSON.parse(data);
 }
 
 export function getContactByIdOrNull(id) {
-  return contacts.find((contact) => String(contact.id) === String(id));
+   const data = readFileSync(contacts, "utf-8");
+  return data.find((contact) => String(contact.id) === String(id));
 }
 
-export function addContact(contactData) {
+export async function  addContact(contactData) {
+  const data = readFile(contacts, "utf-8")
+  const parsed = JSON.parse(data)
+  console.log(data)
   const nextId =
-    (contacts.length ? Math.max(...contacts.map((contact) => contact.id)) : 0) +
+    (data.length ? Math.max(...data.map((contact) => contact.id)) : 0) +
     1;
   const newContact = {
     id: nextId,
@@ -27,10 +31,10 @@ export function addContact(contactData) {
     tel: contactData.tel,
     country: contactData.country,
   };
-  contacts.push(newContact);
+  parsed.push(newContact);
 
-  // writeFile(dataPath, contacts)
-  console.log(contacts);
+  await writeFile(dataPath, contacts)
+  console.log(parsed);
   return newContact;
 }
 

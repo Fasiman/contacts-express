@@ -10,6 +10,7 @@ import { contactSchema, updateContactSchema, deleteContactSchema } from "../vali
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 export const getContacts = ctrlWrapper((req, res) => {
+  console.log(getAllContacts())
   res.send(getAllContacts());
 });
 
