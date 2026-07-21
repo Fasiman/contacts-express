@@ -1,53 +1,58 @@
 import { writeFile, readFile } from "fs/promises";
-// import { contacts } from "../../db/contacts.js";
-import fs, { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const contacts = path.join(__dirname, "../db/contacts.json");
-export function getAllContacts() {
-  const data = readFileSync(contacts, "utf-8");
+const contactsPath = path.join(__dirname, "../db/contacts.json");
 
+async function readContacts() {
+  const data = await readFile(contactsPath, "utf-8");
   return JSON.parse(data);
 }
 
-export function getContactByIdOrNull(id) {
-   const data = readFileSync(contacts, "utf-8");
-  return data.find((contact) => String(contact.id) === String(id));
+async function writeContacts(contacts) {
+  await writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 }
 
-export async function  addContact(contactData) {
-  const data = readFile(contacts, "utf-8")
-  const parsed = JSON.parse(data)
-  console.log(data)
-  const nextId =
-    (data.length ? Math.max(...data.map((contact) => contact.id)) : 0) +
-    1;
+export async function getAllContacts() {
+  return await readContacts();
+}
+
+export async function getContactByIdOrNull(id) {
+  const contacts = await readContacts();
+  return contacts.find((contact) => String(contact.id) === String(id)) || null;
+}
+
+export async function addContact(contactData) {
+  const contacts = await readContacts();
+  const ids = contacts
+    .map((contact) => contact.id)
+    .filter((id) => typeof id === 'number');
+
+  const nextId = (ids.length > 0 ? Math.max(...ids) : 0) + 1;
   const newContact = {
     id: nextId,
-    name: contactData.name,
-    tel: contactData.tel,
-    country: contactData.country,
+    ...contactData,
   };
-  parsed.push(newContact);
-
-  await writeFile(dataPath, contacts)
-  console.log(parsed);
+  contacts.push(newContact);
+  await writeContacts(contacts);
   return newContact;
 }
 
-export function patchContact(id, updates) {
-  const contact = getContactByIdOrNull(id);
-  if (!contact) {
+export async function patchContact(id, updates) {
+  const contacts = await readContacts();
+  const index = contacts.findIndex((contact) => String(contact.id) === String(id));
+  if (index === -1) {
     return null;
   }
-
-  return contact;
+  contacts[index] = { ...contacts[index], ...updates };
+  await writeContacts(contacts);
+  return contacts[index];
 }
 
-export function removeContact(id) {
+export async function removeContact(id) {
+  const contacts = await readContacts();
   const index = contacts.findIndex(
     (contact) => String(contact.id) === String(id),
   );
@@ -55,5 +60,6 @@ export function removeContact(id) {
     return false;
   }
   contacts.splice(index, 1);
+  await writeContacts(contacts);
   return true;
 }
