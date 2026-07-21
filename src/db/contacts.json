@@ -1,8 +1,20 @@
 [
   {
+    "id": 1,
+    "name": "Yakov",
+    "tel": "13457891798345",
+    "country": "UKR"
+  },
+  {
     "id": 2,
-    "name": "Maxikm",
-    "tel": "1232314523524",
-    "country": "Ukr"
+    "name": "Ilya",
+    "tel": "153414364133253221",
+    "country": "UKR"
+  },
+  {
+    "id": 3,
+    "name": "Nikita",
+    "tel": "1298035498325",
+    "country": "US"
   }
 ]
